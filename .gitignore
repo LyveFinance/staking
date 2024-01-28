@@ -1,0 +1,14 @@
+*.log
+*.tmp
+/node_modules/
+/build/
+/dist/
+*.env
+.env
+/artifacts
+/cache
+/scripts
+*.DS_Store
+/*.DS_Store
+.DS_Store
+/typechain-types/
