@@ -43,7 +43,7 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
     mapping (address => mapping(uint256 => uint256)) public cumulativeRewards;
     mapping (address => mapping(uint256 => uint256)) public averageStakedAmounts;
 
-    mapping(address => uint256) public lastStakeTime;
+    mapping(address => mapping(address => uint256)) public lastStakeTime;
 
     address public treasury;
 
@@ -279,7 +279,7 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
     
         stakedAmounts[_account] = stakedAmounts[_account].add(_amount);
         depositBalances[_account][_depositToken] = depositBalances[_account][_depositToken].add(_amount);
-        lastStakeTime[_account] = block.timestamp;
+        lastStakeTime[_account][_depositToken] = block.timestamp;
         _mint(_account, _amount);
     }
     
@@ -298,7 +298,7 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
         require(depositBalance >= _amount, "RewardTracker: _amount exceeds depositBalance");
         depositBalances[_account][_depositToken] = depositBalance.sub(_amount);
 
-        uint256 fee = _fee(_account,_amount);
+        uint256 fee = getFee(_account,_depositToken,_amount);
         uint256 amountAfterFee = _amount.sub(fee);
 
         _burn(_account, _amount);
@@ -309,9 +309,9 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
         IERC20(_depositToken).safeTransfer(_receiver, amountAfterFee);
     }
 
-    function _fee(address _account,uint256 _amount) private view returns(uint256){
+    function getFee(address _account,address _depositToken,uint256 _amount) public view returns(uint256){
         uint256 fee = 0;
-        uint256 timeStaked = block.timestamp.sub(lastStakeTime[_account]);
+        uint256 timeStaked = block.timestamp.sub(lastStakeTime[_account][_depositToken]);
         if (timeStaked <= timeThreshold1) {
             fee = _amount.mul(feeRate1).div(10000);
         } else if (timeStaked <= timeThreshold2) {
