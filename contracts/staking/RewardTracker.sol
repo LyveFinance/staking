@@ -54,6 +54,7 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
     uint256 public timeThreshold2;
     uint256 public timeThreshold3;
 
+    uint256 public constant MAX_FEE_RATE = 2500;
 
     bool public inPrivateTransferMode;
     bool public inPrivateStakingMode;
@@ -105,6 +106,10 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
         isHandler[_handler] = _isActive;
     }
     function setFeeRatesAndThresholds(uint256 _feeRate1, uint256 _feeRate2, uint256 _feeRate3, uint256 _timeThreshold1, uint256 _timeThreshold2, uint256 _timeThreshold3) external onlyGov {
+        require(_feeRate1 <= MAX_FEE_RATE, "feeRate1 exceeds maximum limit");
+        require(_feeRate2 <= MAX_FEE_RATE, "feeRate2 exceeds maximum limit");
+        require(_feeRate3 <= MAX_FEE_RATE, "feeRate3 exceeds maximum limit");
+
         feeRate1 = _feeRate1;
         feeRate2 = _feeRate2;
         feeRate3 = _feeRate3;

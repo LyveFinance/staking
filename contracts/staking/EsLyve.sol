@@ -38,6 +38,11 @@ contract EsLyve is ERC20,ReentrancyGuard,Ownable{
 
     uint internal constant MAXTIME =  2 * 365 * 86400;
 
+    uint internal constant MAX_DURATION =  6 * 30 days;
+
+    uint internal constant MIN_EXIT_RATIO =  60 ; //60%
+    uint internal constant MAX_EXIT_RATIO =  100 ; //60%
+
     uint256 public exitRatio = 70; // 70%
 
     uint256 public toTreasury = 50; // 50%
@@ -88,10 +93,13 @@ contract EsLyve is ERC20,ReentrancyGuard,Ownable{
         ve = IVotingEscrow(_ve);
     }
     function setDuration( uint256 _vestingDuration)  external onlyOwner{
+        require(_vestingDuration <= MAX_DURATION, "duration exceeds maximum limit");
         vestingDuration = _vestingDuration;
     }
 
     function setExitRatio( uint256 _exitRatio)  external onlyOwner{
+        require(_exitRatio >= MIN_EXIT_RATIO, "exitRatio ERROR");
+        require(_exitRatio <= MAX_EXIT_RATIO, "exitRatio ERROR");
         exitRatio = _exitRatio;
     }
      function setTreasuryRatio( uint256 _treasuryRatio)  external onlyOwner{
