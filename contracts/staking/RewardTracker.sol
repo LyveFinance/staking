@@ -54,7 +54,7 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
     uint256 public timeThreshold2;
     uint256 public timeThreshold3;
 
-    uint256 public constant MAX_FEE_RATE = 2500;
+    uint256 public constant MAX_FEE_RATE = 2500;//25%
 
     bool public inPrivateTransferMode;
     bool public inPrivateStakingMode;
