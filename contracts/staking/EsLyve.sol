@@ -179,7 +179,7 @@ contract EsLyve is ERC20,ReentrancyGuard,Ownable{
         uint stakingVaultWeth = wethAmount - treasuryWeth;
 
         if(stakingVaultWeth > 0 ){
-            assert(WETH.transfer(stakingValut, wethAmount));
+            assert(WETH.transfer(stakingValut, stakingVaultWeth));
         }
 
         require(LYVE.transfer(msg.sender, amount), "Transfer failed");
