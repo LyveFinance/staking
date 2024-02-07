@@ -157,7 +157,7 @@ contract EsLyve is ERC20,ReentrancyGuard,Ownable{
     
     function immediateConversion(uint256 amount,uint splige) public nonReentrant payable {
         require(balanceOf(msg.sender) >= amount, "Insufficient esLyve balance");
-        require(balanceOf(address(this)) >= amount,"Insufficient lyve balance");
+        require(LYVE.balanceOf(address(this)) >= amount,"Insufficient lyve balance");
 
         uint wethAmount = quotePayment(amount);
 
