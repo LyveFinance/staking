@@ -19,6 +19,8 @@ interface IWETH {
     function deposit() external payable;
     function transfer(address to, uint value) external returns (bool);
     function withdraw(uint) external;
+    function balanceOf(address) external returns (uint256);
+
 }
 
 contract EsLyve is ERC20,ReentrancyGuard,Ownable{
@@ -155,6 +157,7 @@ contract EsLyve is ERC20,ReentrancyGuard,Ownable{
     
     function immediateConversion(uint256 amount,uint splige) public nonReentrant payable {
         require(balanceOf(msg.sender) >= amount, "Insufficient esLyve balance");
+        require(balanceOf(address(this)) >= amount,"Insufficient lyve balance");
 
         uint wethAmount = quotePayment(amount);
 
@@ -199,5 +202,17 @@ contract EsLyve is ERC20,ReentrancyGuard,Ownable{
         LYVE.approve(address(ve), _value);
         return ve.create_lock_for(_value, MAXTIME, _to);
     }
+    function withdrawETH(address payable to, uint256 amount) external onlyOwner nonReentrant {
+        require(address(this).balance >= amount, "Insufficient balance");
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "Transfer failed");
+    }
+    function withdrawWETH(address payable to, uint256 amount) external onlyOwner nonReentrant {
+        require(WETH.balanceOf(address(this)) >= amount, "Insufficient WETH balance");
+        WETH.withdraw(amount);
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "ETH transfer failed");
+    }
+
 
 }
